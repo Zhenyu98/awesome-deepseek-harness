@@ -23,7 +23,7 @@
 <br>
 
 <p align="center">
-	<b>DeepSeek Harness 生态精选：插件、工具与基建。</b><br>
+	<b>DeepSeek Harness (DSH) 生态精选：插件、工具与基建（数据源：dsh-external/hub catalog + GitHub 公开 dsh-plugin Topic）。</b><br>
 </p>
 
 <br>
@@ -48,11 +48,23 @@
 
 ## Install
 
-- Bundle 插件（Git 源一行）: `dsh plugin --profile web add "github:dsh-external/<repo>#main"`
-- 子路径形式: `dsh plugin --profile web add "github:dsh-external/plugin-registry#main&path:/packages/plugin/console"`
-- Repository 插件: 设置 → 插件 → repository 插件源添加 `github:owner/repo#ref`（即改即生效）
+先安装 Node.js，再运行官方运行时：
 
-安装后重启 `dsh web` 生效；管理面板：设置 → 「插件」。
+```sh
+npx @deepseek-ai/dsh web
+```
+
+安装外部 profile bundle 前，确保 `pnpm` 已在 `PATH` 中：
+
+```sh
+dsh plugin --profile web add "github:owner/repo#ref"
+```
+
+`dsh plugin` 会把包管理操作转发给 pnpm，因此支持 npm、Git/GitHub、本地路径、`file:` 和 `link:` 包规格。只有声明了 `dsh.bundle.patch` 的包才会成为 active profile layer；普通依赖会安装但不会激活。安装或更新 bundle 后，重启 `dsh --profile web`。
+
+旧的 `&path:` 子路径写法和 Repository Plugin 安装方式已不属于当前官方 bundle 流程；请使用声明了 `dsh.bundle.patch` 的可安装包。
+
+管理面板：设置 → 「插件」。
 
 ## Recently Added
 
@@ -105,6 +117,7 @@
 - [dsh-data-agent](https://github.com/dsh-external/dsh-data-agent) - 让 AI 连数据库、写 SQL
 - [dsh-easy-ctx-manager](https://github.com/dsh-external/dsh-easy-ctx-manager) - 上下文管理：上下文节省等（cordis）
 - [dsh-kb-sieve](https://github.com/dsh-external/dsh-kb-sieve) - knowledge-base 插件：构建可审计 KB 包（references + SQL）
+- [dsh-payload-capture](https://github.com/moeblack/dsh-payload-capture) - 捕捉每一次上行模型 API payload 存为 JSON（调试与观测）
 
 ## Input & Editing
 

@@ -24,7 +24,7 @@
 <br>
 
 <p align="center">
-	<b>Curated list of plugins, tools &amp; ecosystem for DeepSeek Harness.</b><br>
+	<b>Curated DeepSeek Harness (DSH) ecosystem: plugins, tools &amp; infrastructure. Sources: dsh-external/hub catalog and the public GitHub dsh-plugin topic.</b><br>
 </p>
 
 <br>
@@ -49,11 +49,23 @@
 
 ## Install
 
-- Bundle plugin (one-line Git source): `dsh plugin --profile web add "github:dsh-external/<repo>#main"`
-- Sub-path form: `dsh plugin --profile web add "github:dsh-external/plugin-registry#main&path:/packages/plugin/console"`
-- Repository plugin: Settings → Plugins → add `github:owner/repo#ref` to repository plugin sources (takes effect immediately).
+Install the official runtime with Node.js:
 
-Restart `dsh web` after installing a bundle plugin. Management panel: Settings → Plugins.
+```sh
+npx @deepseek-ai/dsh web
+```
+
+Install an external profile bundle with pnpm on your `PATH`:
+
+```sh
+dsh plugin --profile web add "github:owner/repo#ref"
+```
+
+`dsh plugin` forwards package operations to pnpm, so npm, Git/GitHub, local path, `file:` and `link:` package specs are supported. Only packages declaring `dsh.bundle.patch` become active profile layers; plain dependencies remain installed but inactive. Restart `dsh --profile web` after installing or updating a bundle.
+
+The former `&path:` sub-path and Repository Plugin installation forms are not part of the current official bundle flow; use an installable package that declares `dsh.bundle.patch`.
+
+Management panel: Settings → Plugins.
 
 ## Recently Added
 
@@ -106,6 +118,7 @@ Restart `dsh web` after installing a bundle plugin. Management panel: Settings �
 - [dsh-data-agent](https://github.com/dsh-external/dsh-data-agent) - Let the model connect to databases and write SQL.
 - [dsh-easy-ctx-manager](https://github.com/dsh-external/dsh-easy-ctx-manager) - Context management: context saving and more (cordis).
 - [dsh-kb-sieve](https://github.com/dsh-external/dsh-kb-sieve) - Knowledge-base plugin: build auditable KB packages (references + SQL).
+- [dsh-payload-capture](https://github.com/moeblack/dsh-payload-capture) - Capture every upstream model API payload to JSON (debug & observability).
 
 ## Input & Editing
 

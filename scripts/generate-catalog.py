@@ -21,7 +21,12 @@ def fetch_topic_repos(token=None):
         repos.extend(items)
         if not items or len(repos) >= data.get("total_count", len(repos)):
             break
-    return repos
+    unique = {}
+    for repo in repos:
+        key = (repo.get("html_url") or repo.get("full_name") or "").rstrip("/").lower()
+        if key:
+            unique[key] = repo
+    return list(unique.values())
 
 # Public-facing catalog: drop internal program repos, rewrite notes referencing the test phase.
 DROP_REPOS = {"group-chat-diary", "onboarding", "review-panel", "dsh-club"}
@@ -29,9 +34,13 @@ NOTE_REWRITES = {
     "issues": "官方 issue 反馈专用仓库（问题追踪）",
     "dsh-sfw": "防社死 WIP：遮挡敏感界面内容",
     "dsh-desktop-tools": "DSH 桌面工具集：一键启动、自动升级、开机自启、PWA 可安装补丁",
+    "context-doctor": "上下文注入审计：指令链/技能目录/工具 schema 的 token 成本量化 + 重复/冲突检测 + 裁剪建议（Web 圆环 + context_audit）",
+}
+NAME_REWRITES = {
+    "context-doctor": "dsh-context-doctor",
 }
 URL_REWRITES = {
-    "context-doctor": "https://github.com/Zhenyu98/context-doctor",
+    "context-doctor": "https://github.com/Zhenyu98/dsh-context-doctor",
 }
 
 # Generic guard: drop any entry whose note references the test phase.
@@ -52,6 +61,9 @@ def note_for(r):
     if name in NOTE_REWRITES:
         return NOTE_REWRITES[name]
     return (r.get("note") or r.get("description") or "").strip()
+
+def display_name(r):
+    return NAME_REWRITES.get(r.get("name"), r.get("name", "?"))
 
 def url_for(r):
     return URL_REWRITES.get(r.get("name"), r.get("url", "#"))
@@ -108,7 +120,7 @@ def main():
         out.append("| 仓库 | 描述 |")
         out.append("|---|---|")
         for r in sorted(items, key=lambda x: x.get("name", "")):
-            name = r.get("name", "?")
+            name = display_name(r)
             desc = note_for(r).replace("|", "\\|")
             out.append(f"| [{name}]({url_for(r)}) | {desc} |")
         out.append("")
@@ -121,7 +133,7 @@ def main():
         out.append("|---|---|")
         for r in sorted(uncat, key=lambda x: x.get("name", "")):
             desc = note_for(r).replace("|", "\\|")
-            out.append(f"| [{r.get('name','?')}]({url_for(r)}) | {desc} |")
+            out.append(f"| [{display_name(r)}]({url_for(r)}) | {desc} |")
         out.append("")
 
     # 插件集（collections）
